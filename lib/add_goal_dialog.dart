@@ -223,6 +223,7 @@ class _AddGoalDialogState extends State<AddGoalDialog> {
                                 'startDate':
                                     DateFormat("yyyy. MM. dd.").format(now),
                                 'endDate': selectedEndDate,
+                                'isDone': false,
                               },
                             );
                           },

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/today_goal_list.dart';
 import 'package:intl/intl.dart';
+import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:timer_builder/timer_builder.dart';
 
 class TodoListPage extends StatefulWidget {
@@ -85,6 +86,20 @@ class _TodoListPageState extends State<TodoListPage> {
                   ],
                 ),
                 margin: const EdgeInsets.fromLTRB(0, 80, 25, 0),
+                child: CircularPercentIndicator(
+                  animation: true,
+                  lineWidth: 18,
+                  radius: 70.0,
+                  percent: 0.6,
+                  center: const Text(
+                    '0%',
+                    style: TextStyle(
+                        fontSize: 28, fontFamily: 'PretendardSemiBold'),
+                  ),
+                  circularStrokeCap: CircularStrokeCap.round,
+                  progressColor: Color(0xffFF6B00),
+                  backgroundColor: Colors.white,
+                ),
               ),
             ],
           ),

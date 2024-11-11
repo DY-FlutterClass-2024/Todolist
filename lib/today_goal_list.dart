@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/add_goal_dialog.dart';
+import 'package:flutter_application_1/learnmore_page.dart';
+import 'package:flutter_application_1/todo_list_page.dart';
 
 class TodayGoalList extends StatefulWidget {
   const TodayGoalList({super.key});
@@ -9,68 +11,84 @@ class TodayGoalList extends StatefulWidget {
 }
 
 class _TodayGoalListState extends State<TodayGoalList> {
-  List<Map<String, String?>> goals = []; 
+  List<Map<String, dynamic>> goals = [];
 
-  void addGoal(Map<String, String?> newGoal) {
+  void addGoal(Map<String, dynamic> newGoal) {
     setState(() {
-      goals.add(newGoal); 
+      goals.add(newGoal);
     });
   }
 
-  Widget buildGoalContainer(Map<String, String?> goal) {
-    return Container(
-      height: 165,
-      margin: const EdgeInsets.fromLTRB(0, 0, 0, 25),
-      padding: const EdgeInsets.fromLTRB(25, 20, 25, 20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: const [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 5,
-            spreadRadius: 0,
-            offset: Offset(0, 2),
+  void deleteGoal(Map<String, dynamic> goaltoDelete) {
+    setState(() {
+      goals.remove(goaltoDelete);
+    });
+  }
+
+  Widget buildGoalContainer(Map<String, dynamic> goal) {
+    return GestureDetector(
+        onTap: () {
+          showDialog(
+              context: context,
+              builder: (context) => TodoListLearnmorePage(
+                    goal: goal,
+                    onDelete: () => deleteGoal(goal),
+                    onSuccess: () => {goal['isDone']},
+                  ));
+        },
+        child: Container(
+          height: 165,
+          margin: const EdgeInsets.fromLTRB(0, 0, 0, 25),
+          padding: const EdgeInsets.fromLTRB(25, 20, 25, 20),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: const [
+              BoxShadow(
+                color: Colors.black12,
+                blurRadius: 5,
+                spreadRadius: 0,
+                offset: Offset(0, 2),
+              ),
+            ],
           ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            goal['title'] ?? '제목 없음',
-            style: const TextStyle(
-              fontFamily: 'PretendardBold',
-              fontSize: 18,
-            ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                goal['title'] ?? '제목 없음',
+                style: const TextStyle(
+                  fontFamily: 'PretendardBold',
+                  fontSize: 18,
+                ),
+              ),
+              const SizedBox(height: 5),
+              Text(
+                goal['detail'] ?? '',
+                style: const TextStyle(
+                  fontFamily: 'PretendardRegular',
+                  fontSize: 12,
+                  color: Color(0xff5a5a5a),
+                ),
+              ),
+              const SizedBox(height: 30),
+              const Text(
+                '기한',
+                style: TextStyle(
+                  fontFamily: 'PretendardRegular',
+                  fontSize: 14,
+                ),
+              ),
+              Text(
+                '${goal['startDate'] ?? '----. --. --.'}'
+                '  ~  '
+                '${goal['endDate'] ?? '----. --. --.'}',
+                style: const TextStyle(
+                    fontFamily: 'PretendardMedium', fontSize: 18),
+              ),
+            ],
           ),
-          const SizedBox(height: 5),
-          Text(
-            goal['detail'] ?? '',
-            style: const TextStyle(
-              fontFamily: 'PretendardRegular',
-              fontSize: 12,
-              color: Color(0xff5a5a5a),
-            ),
-          ),
-          const SizedBox(height: 30),
-          const Text(
-            '기한',
-            style: TextStyle(
-              fontFamily: 'PretendardRegular',
-              fontSize: 14,
-            ),
-          ),
-          Text(
-            '${goal['startDate'] ?? '----. --. --.'}'
-            '  ~  '
-            '${goal['endDate'] ?? '----. --. --.'}',
-            style:
-                const TextStyle(fontFamily: 'PretendardMedium', fontSize: 18),
-          ),
-        ],
-      ),
-    );
+        ));
   }
 
   @override
@@ -147,7 +165,7 @@ class _TodayGoalListState extends State<TodayGoalList> {
                               );
 
                               if (result != null) {
-                                addGoal(result); 
+                                addGoal(result);
                               }
                             },
                             style: ButtonStyle(
@@ -173,7 +191,6 @@ class _TodayGoalListState extends State<TodayGoalList> {
                   ),
                 ),
               ),
-           
               Positioned(
                 left: 0,
                 right: 0,
@@ -184,7 +201,7 @@ class _TodayGoalListState extends State<TodayGoalList> {
                   child: ListView.builder(
                     itemCount: goals.length,
                     itemBuilder: (context, index) {
-                      final goal = goals[index];
+                      final Map<String, dynamic> goal = goals[index];
                       return buildGoalContainer(goal);
                     },
                   ),
