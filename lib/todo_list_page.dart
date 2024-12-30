@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/today_goal_list.dart';
 import 'package:intl/intl.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timer_builder/timer_builder.dart';
 
 class TodoListPage extends StatefulWidget {
@@ -12,18 +15,47 @@ class TodoListPage extends StatefulWidget {
 }
 
 class _TodoListPageState extends State<TodoListPage> {
+  late final SharedPreferences _prefs;
+
   List<Map<String, dynamic>> goals = [];
 
-  void addGoal(Map<String, dynamic> newGoal) {
+  void initPrefs() async {
+    _prefs = await SharedPreferences.getInstance();
+
+    final List<String> todoStr = _prefs.getStringList('todoList') ?? [];
+    final List<Map<String, dynamic>> todoGoals = todoStr
+        .map((todo) => jsonDecode(todo) as Map<String, dynamic>)
+        .toList();
+
+    setState(() {
+      goals = todoGoals;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    initPrefs();
+  }
+
+  void updatePrefs() async {
+    final List<String> todoStr = goals.map((goal) => jsonEncode(goal)).toList();
+    _prefs.setStringList('todoList', todoStr);
+  }
+
+  void addGoal(Map<String, dynamic> newGoal) async {
     setState(() {
       goals.add(newGoal);
     });
+    updatePrefs();
   }
 
   void deleteGoal(Map<String, dynamic> goaltoDelete) {
     setState(() {
       goals.remove(goaltoDelete);
     });
+    updatePrefs();
   }
 
   void successGoal(Map<String, dynamic> goalToSuccess) {
@@ -31,6 +63,7 @@ class _TodoListPageState extends State<TodoListPage> {
     setState(() {
       goals[goalIndex]['isDone'] = !goals[goalIndex]['isDone'];
     });
+    updatePrefs();
   }
 
   @override
@@ -80,7 +113,7 @@ class _TodoListPageState extends State<TodoListPage> {
                         children: [
                           Text(
                             DateFormat('MM / d').format(now),
-                            style: const TextStyle( 
+                            style: const TextStyle(
                               fontFamily: 'PretendardMedium',
                               fontSize: 36,
                             ),

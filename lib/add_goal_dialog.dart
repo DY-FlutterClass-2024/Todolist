@@ -37,7 +37,7 @@ class _AddGoalDialogState extends State<AddGoalDialog> {
       child: Stack(
         children: [
           Container(
-            margin: const EdgeInsets.fromLTRB(25, 172, 25, 172),
+            margin: const EdgeInsets.fromLTRB(10, 100, 10, 100),
             width: double.infinity,
             height: double.infinity,
             decoration: const BoxDecoration(
