@@ -47,7 +47,15 @@ class _TodoListLearnmorePageState extends State<TodoListLearnmorePage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
+                            Text(
+                              widget.goal['title'] ?? '제목 없음',
+                              style: const TextStyle(
+                                fontFamily: 'PretendardBold',
+                                fontSize: 24,
+                              ),
+                            ),
                             SizedBox(
                               width: 30,
                               height: 30,
@@ -66,17 +74,10 @@ class _TodoListLearnmorePageState extends State<TodoListLearnmorePage> {
                                   ),
                                 ),
                                 icon: const Icon(
-                                  Icons.chevron_left,
+                                  Icons.clear,
                                   color: Colors.black,
                                   size: 30,
                                 ),
-                              ),
-                            ),
-                            Text(
-                              widget.goal['title'] ?? '제목 없음',
-                              style: const TextStyle(
-                                fontFamily: 'PretendardBold',
-                                fontSize: 24,
                               ),
                             ),
                           ],

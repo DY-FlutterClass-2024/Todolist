@@ -4,27 +4,24 @@ import 'package:flutter_application_1/learnmore_page.dart';
 import 'package:flutter_application_1/todo_list_page.dart';
 
 class TodayGoalList extends StatefulWidget {
-  const TodayGoalList({super.key});
+  const TodayGoalList({
+    super.key,
+    required this.goals,
+    required this.addGoal,
+    required this.deleteGoal,
+    required this.successGoal,
+  });
+
+  final List<Map<String, dynamic>> goals;
+  final void Function(Map<String, dynamic> newGoal) addGoal;
+  final void Function(Map<String, dynamic> goalToDelete) deleteGoal;
+  final void Function(Map<String, dynamic> goalToSuccess) successGoal;
 
   @override
   State<TodayGoalList> createState() => _TodayGoalListState();
 }
 
 class _TodayGoalListState extends State<TodayGoalList> {
-  List<Map<String, dynamic>> goals = [];
-
-  void addGoal(Map<String, dynamic> newGoal) {
-    setState(() {
-      goals.add(newGoal);
-    });
-  }
-
-  void deleteGoal(Map<String, dynamic> goaltoDelete) {
-    setState(() {
-      goals.remove(goaltoDelete);
-    });
-  }
-
   Widget buildGoalContainer(Map<String, dynamic> goal) {
     return GestureDetector(
         onTap: () {
@@ -32,8 +29,8 @@ class _TodayGoalListState extends State<TodayGoalList> {
               context: context,
               builder: (context) => TodoListLearnmorePage(
                     goal: goal,
-                    onDelete: () => deleteGoal(goal),
-                    onSuccess: () => {goal['isDone']},
+                    onDelete: () => widget.deleteGoal(goal),
+                    onSuccess: () => widget.successGoal(goal),
                   ));
         },
         child: Container(
@@ -165,7 +162,7 @@ class _TodayGoalListState extends State<TodayGoalList> {
                               );
 
                               if (result != null) {
-                                addGoal(result);
+                                widget.addGoal(result);
                               }
                             },
                             style: ButtonStyle(
@@ -199,9 +196,9 @@ class _TodayGoalListState extends State<TodayGoalList> {
                 child: Container(
                   margin: const EdgeInsets.fromLTRB(25, 25, 25, 0),
                   child: ListView.builder(
-                    itemCount: goals.length,
+                    itemCount: widget.goals.length,
                     itemBuilder: (context, index) {
-                      final Map<String, dynamic> goal = goals[index];
+                      final Map<String, dynamic> goal = widget.goals[index];
                       return buildGoalContainer(goal);
                     },
                   ),

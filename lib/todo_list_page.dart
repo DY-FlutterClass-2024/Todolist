@@ -12,8 +12,39 @@ class TodoListPage extends StatefulWidget {
 }
 
 class _TodoListPageState extends State<TodoListPage> {
+  List<Map<String, dynamic>> goals = [];
+
+  void addGoal(Map<String, dynamic> newGoal) {
+    setState(() {
+      goals.add(newGoal);
+    });
+  }
+
+  void deleteGoal(Map<String, dynamic> goaltoDelete) {
+    setState(() {
+      goals.remove(goaltoDelete);
+    });
+  }
+
+  void successGoal(Map<String, dynamic> goalToSuccess) {
+    final int goalIndex = goals.indexOf(goalToSuccess);
+    setState(() {
+      goals[goalIndex]['isDone'] = !goals[goalIndex]['isDone'];
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    final goalLength = goals.length;
+    final int goalSucces = goals.fold(0, (total, goal) {
+      if (goal['isDone'] == true) {
+        return total + 1;
+      }
+      return total;
+    });
+
+    final percent = goalLength > 0 ? goalSucces / goalLength : 0.0;
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: Column(
@@ -48,8 +79,8 @@ class _TodoListPageState extends State<TodoListPage> {
                       return Column(
                         children: [
                           Text(
-                            DateFormat('MMM / d').format(now),
-                            style: const TextStyle(
+                            DateFormat('MM / d').format(now),
+                            style: const TextStyle( 
                               fontFamily: 'PretendardMedium',
                               fontSize: 36,
                             ),
@@ -90,25 +121,30 @@ class _TodoListPageState extends State<TodoListPage> {
                   animation: true,
                   lineWidth: 18,
                   radius: 70.0,
-                  percent: 0.6,
-                  center: const Text(
-                    '0%',
-                    style: TextStyle(
+                  percent: percent,
+                  center: Text(
+                    (percent * 100).toStringAsFixed(1),
+                    style: const TextStyle(
                         fontSize: 28, fontFamily: 'PretendardSemiBold'),
                   ),
                   circularStrokeCap: CircularStrokeCap.round,
-                  progressColor: Color(0xffFF6B00),
+                  progressColor: const Color(0xffFF6B00),
                   backgroundColor: Colors.white,
                 ),
               ),
             ],
           ),
           const SizedBox(height: 58),
-          const Expanded(child: TodayGoalList()),
+          Expanded(
+            child: TodayGoalList(
+              goals: goals,
+              addGoal: addGoal,
+              deleteGoal: deleteGoal,
+              successGoal: successGoal,
+            ),
+          ),
         ],
       ),
     );
   }
 }
-
-void main() => runApp(const MaterialApp(home: TodoListPage()));
